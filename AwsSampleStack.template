@@ -1,0 +1,316 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Sample stack for demonstrating features of Spring Cloud AWS",
+    "Parameters": {
+        "RdsPassword": {
+            "Description": "The master password for the RDS instance",
+            "Type": "String",
+            "MinLength": 8
+        }
+    },
+    "Resources": {
+        "MessageProcessingQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+            }
+        },
+        "SampleStackVpc" : {
+            "Type" : "AWS::EC2::VPC",
+            "Properties" : {
+                "CidrBlock" : "10.0.0.0/16",
+                "EnableDnsSupport" : true,
+                "EnableDnsHostnames" : true
+
+            }
+        },
+        "SubnetA" : {
+            "Type" : "AWS::EC2::Subnet",
+            "Properties" : {
+                "AvailabilityZone" : "eu-west-1a",
+                "VpcId" : { "Ref" : "SampleStackVpc" },
+                "CidrBlock" : "10.0.0.0/24"
+            }
+        },
+        "SubnetB" : {
+            "Type" : "AWS::EC2::Subnet",
+            "Properties" : {
+                "AvailabilityZone" : "eu-west-1b",
+                "VpcId" : { "Ref" : "SampleStackVpc" },
+                "CidrBlock" : "10.0.1.0/24"
+            }
+        },
+        "InternetGateway" : {
+            "Type" : "AWS::EC2::InternetGateway"
+        },
+        "AttachGateway" : {
+            "Type" : "AWS::EC2::VPCGatewayAttachment",
+            "Properties" : {
+                "VpcId" : { "Ref" : "SampleStackVpc" },
+                "InternetGatewayId" : { "Ref" : "InternetGateway" }
+            }
+        },
+        "RouteTable" : {
+            "Type" : "AWS::EC2::RouteTable",
+            "Properties" : {
+                "VpcId" : {"Ref" : "SampleStackVpc"}
+            }
+        },
+        "Subnet1RouteTableAssociation" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "SubnetId" : { "Ref" : "SubnetA" },
+                "RouteTableId" : { "Ref" : "RouteTable" }
+            }
+        },
+        "Subnet2RouteTableAssociation" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "SubnetId" : { "Ref" : "SubnetB" },
+                "RouteTableId" : { "Ref" : "RouteTable" }
+            }
+        },
+        "RouteOutbound" : {
+            "Type" : "AWS::EC2::Route",
+            "DependsOn" : "AttachGateway",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "RouteTable" },
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "GatewayId" : { "Ref" : "InternetGateway" }
+            }
+        },
+        "InstanceSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "VpcId" : { "Ref" : "SampleStackVpc" },
+                "GroupDescription" : "MySQL",
+                "SecurityGroupIngress" : [
+                    {"IpProtocol" : "tcp", "FromPort" : "3306", "ToPort" : "3306", "CidrIp" : "46.237.207.188/32"},
+                    {"IpProtocol" : "tcp", "FromPort" : "3306", "ToPort" : "3306", "SourceSecurityGroupId" : {"Ref" : "WebSecurityGroup"}}
+                ]
+            }
+        },
+        "SampleStackSubnetGroup" : {
+            "Type" : "AWS::RDS::DBSubnetGroup",
+            "Properties" : {
+                "DBSubnetGroupDescription" : "description",
+                "SubnetIds" : [ { "Ref" : "SubnetA" },{ "Ref" : "SubnetB" }  ]
+            }
+        },
+        "ApplicationRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version" : "2012-10-17",
+                    "Statement": [ {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": [ "ec2.amazonaws.com" ]
+                        },
+                        "Action": [ "sts:AssumeRole" ]
+                    } ]
+                },
+                "Path": "/",
+                "Policies": [ {
+                    "PolicyName": "application",
+                    "PolicyDocument": {
+                        "Version" : "2012-10-17",
+                        "Statement": [
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "rds:DescribeDBInstances",
+                                    "rds:ListTagsForResource"
+                                ],
+                                "Resource": [
+                                    "*"
+                                ]
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "elasticache:DescribeCacheClusters"
+                                ],
+                                "Resource": [
+                                    "*"
+                                ]
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "sns:ConfirmSubscription",
+                                    "sns:CreateTopic",
+                                    "sns:GetEndpointAttributes",
+                                    "sns:GetSubscriptionAttributes",
+                                    "sns:GetTopicAttributes",
+                                    "sns:ListSubscriptions",
+                                    "sns:ListSubscriptionsByTopic",
+                                    "sns:ListTopics",
+                                    "sns:Subscribe",
+                                    "sns:Unsubscribe",
+                                    "sns:Publish"
+                                ],
+                                "Resource": [
+                                    "*"
+                                ]
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "sqs:CreateQueue",
+                                    "sqs:DeleteMessage",
+                                    "sqs:GetQueueAttributes",
+                                    "sqs:GetQueueUrl",
+                                    "sqs:ListQueues",
+                                    "sqs:ReceiveMessage",
+                                    "sqs:SendMessage"
+                                ],
+                                "Resource": [
+                                    "*"
+                                ]
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "ses:SendEmail",
+                                    "ses:SendRawEmail"
+                                ],
+                                "Resource": [
+                                    "*"
+                                ]
+                            },
+                            {
+                                "Effect": "Allow",
+                                "Action": [
+                                    "cloudformation:ListStackResources"
+                                ],
+                                "Resource": [
+                                    "*"
+                                ]
+                            }
+                        ]
+                    }
+                } ]
+            }
+        },
+        "ApplicationInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/",
+                "Roles": [ {
+                    "Ref": "ApplicationRole"
+                } ]
+            }
+        },
+        "WebSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "VpcId" : { "Ref" : "SampleStackVpc" },
+                "GroupDescription" : "Web Security Group",
+                "SecurityGroupIngress" : [
+                    {"IpProtocol" : "tcp", "FromPort" : "8080", "ToPort" : "8080", "CidrIp" : "0.0.0.0/0"}
+                ]
+            }
+        },
+        "RdsInstance": {
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "AllocatedStorage": "5",
+                "AvailabilityZone": { "Fn::GetAtt" : [ "SubnetA", "AvailabilityZone" ] } ,
+                "DBInstanceClass": "db.t2.micro",
+                "DBName": "reference",
+                "DBSubnetGroupName" : {"Ref" : "SampleStackSubnetGroup"},
+                "Engine": "mysql",
+                "MasterUsername": "admin",
+                "MasterUserPassword": { "Ref": "RdsPassword" },
+                "PubliclyAccessible": true,
+                "VPCSecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" }  ]
+            }
+        },
+        "SpringBootServer": {
+            "Type": "AWS::EC2::Instance",
+            "DependsOn" : "RdsInstance",
+            "Properties": {
+                "AvailabilityZone": { "Fn::GetAtt" : [ "SubnetA", "AvailabilityZone" ] } ,
+                "IamInstanceProfile": {
+                    "Ref": "ApplicationInstanceProfile"
+                },
+                "ImageId": "ami-6e7bd919",
+                "InstanceType": "t2.micro",
+                "KeyName": "eu-west-1",
+                "NetworkInterfaces" : [ {
+                   "AssociatePublicIpAddress" : true,
+                   "DeviceIndex" : "0",
+                   "GroupSet" : [{"Ref": "WebSecurityGroup" }],
+                   "SubnetId" : { "Ref" : "SubnetA" }
+                }],
+                "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+                    "#!/bin/bash\n",
+                    "cd /home/ec2-user\n",
+                    "wget https://s3.amazonaws.com/repo.elasticspring.org/org/springframework/cloud/aws/sample/spring-cloud-aws-reference-app/1.0.0-BUILD/spring-cloud-aws-reference-app-1.0.0-BUILD.war -O application.jar","\n",
+                    "nohup java -jar application.jar --rdsPassword=",
+                    { "Ref": "RdsPassword" },
+                    " > application.log & \n","\n"
+                ]]}}
+            }
+        },
+        "SnsTopic": {
+            "Type": "AWS::SNS::Topic",
+            "DependsOn" : "SpringBootServer",
+            "Properties": {
+                "Subscription": [
+                    {
+                        "Endpoint": { "Fn::Join" : ["",[
+                            "http://",
+                            { "Fn::GetAtt" : [ "SpringBootServer", "PublicDnsName" ]},
+                            ":8080/sns/receive"]
+                        ] },
+                        "Protocol": "http"
+                    }
+                ]
+            }
+        },
+        "CacheSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "DependsOn" : "WebSecurityGroup",
+            "Properties": {
+                "VpcId" : { "Ref" : "SampleStackVpc" },
+                "GroupDescription": "Elasticache Security Group",
+                "SecurityGroupIngress": [ {
+                    "IpProtocol": "tcp",
+                    "FromPort": "11211",
+                    "ToPort": "11211",
+                    "SourceSecurityGroupId": {"Ref": "WebSecurityGroup"}
+                } ]
+            }
+        },
+        "CacheCluster": {
+            "Type": "AWS::ElastiCache::CacheCluster",
+            "Properties": {
+                "AutoMinorVersionUpgrade": "true",
+                "Engine": "memcached",
+                "CacheNodeType": "cache.t2.micro",
+                "CacheSubnetGroupName" : { "Ref" : "CacheSubnetGroup" },
+                "NumCacheNodes": "1",
+                "VpcSecurityGroupIds": [{"Fn::GetAtt": [ "CacheSecurityGroup", "GroupId"]}]
+            }
+        },
+        "GitHubSourceCode": {
+            "Type": "AWS::ElastiCache::CacheCluster",
+            "Properties": {
+                "AutoMinorVersionUpgrade": "true",
+                "Engine": "memcached",
+                "CacheNodeType": "cache.t2.micro",
+                "CacheSubnetGroupName" : { "Ref" : "CacheSubnetGroup" },
+                "NumCacheNodes": "1",
+                "VpcSecurityGroupIds": [{"Fn::GetAtt": [ "CacheSecurityGroup", "GroupId"]}]
+            }
+        },
+        "CacheSubnetGroup" : {
+            "Type" : "AWS::ElastiCache::SubnetGroup",
+            "Properties" : {
+                "Description" : "Subnet group",
+                "SubnetIds" : [  { "Ref" : "SubnetA" },{ "Ref" : "SubnetB" }  ]
+            }
+        }
+    }
+}

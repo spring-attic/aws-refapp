@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="SpringCloudAws">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- libraries -->
+    <script src="lib/js/angular.min.js"></script>
+    <script src="lib/js/angular-route.min.js"></script>
+    <script src="lib/js/sockjs.min.js"></script>
+    <script src="lib/js/highlight.min.js"></script>
+    <script src="app.js"></script>
+
+    <link rel="stylesheet" href="lib/css/bootstrap.min.css">
+    <link rel="stylesheet" href="lib/css/github.min.css">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body role="document">
+
+<!-- Fixed navbar -->
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#/home">Spring Cloud AWS</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li active><a href="#/home" class="home-icon"><span class="glyphicon glyphicon-home home-icon"></span></a></li>
+                <li active><a href="#/sqs"><img src="images/sqs-icon.svg" class="nav-icon" title="SQS"/></a></li>
+                <li active><a href="#/sns"><img src="images/sns-icon.svg" class="nav-icon" title="SNS"/></a></li>
+                <li active><a href="#/rds"><img src="images/rds-icon.svg" class="nav-icon" title="RDS"/></a></li>
+                <li active><a href="#/elasticache"><img src="images/elasticache-icon.svg" class="nav-icon"
+                                                        title="ElastiCache"/></a></li>
+                <li active><a href="#/ec2"><img src="images/ec2-icon.svg" class="nav-icon" title="EC2"/></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" role="main" ng-view>
+
+</div>
+</body>
+</html>

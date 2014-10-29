@@ -1,0 +1,63 @@
+<div class="jumbotron">
+    <h1>SQS Support</h1>
+
+    <p>This showcase demonstrates the main features provided by the SQS support in Spring Cloud AWS.</p>
+
+    <p><a href="#" class="btn btn-primary btn-lg" role="button">Learn more »</a></p>
+</div>
+
+<div class="panel panel-primary" ng-controller="SqsCtrl as sqs">
+    <div class="panel-heading">
+        <h3 class="panel-title">SQS Support</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" role="form" name="messageForm">
+            <div class="form-group">
+                <label for="message" class="col-sm-2 control-label">Message</label>
+
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="message" placeholder="Message..."
+                           ng-model="sqs.model.messageToProcess.message" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="priority" class="col-sm-2 control-label">Priority</label>
+
+                <div class="col-sm-10">
+                    <select class="form-control" id="priority" ng-model="sqs.model.messageToProcess.priority">
+                        <option value="1">Low</option>
+                        <option value="2" selected>Medium</option>
+                        <option value="3">High</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button ng-click="sqs.sendMessage()" class="btn btn-default" ng-disabled="messageForm.$invalid">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <table class="table table-striped table-condensed" ng-show="sqs.responses.length > 0">
+                <thead>
+                <tr>
+                    <th>Received on</th>
+                    <th>Message</th>
+                    <th>Priority</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in sqs.responses">
+                    <td>{{ row.timestamp | date : 'mediumTime' }}</td>
+                    <td>{{ row.data.message }}</td>
+                    <td>{{ row.data.priority | priority }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <source-code path="src/main/java/org/springframework/cloud/aws/sample/sqs/SqsController.java"></source-code>
+        <source-code path="src/main/resources/org/springframework/cloud/aws/sample/aws-config.xml"></source-code>
+    </div>
+</div>

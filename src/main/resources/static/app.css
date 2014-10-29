@@ -1,0 +1,26 @@
+.nav-icon {
+    width: 3em;
+    height: 3em;
+}
+
+span.home-icon {
+    margin-top: 9px;
+    font-size: 1.8em;
+}
+
+a.home-icon {
+    height: 50px;
+}
+
+/* Override bootstrap styles */
+.navbar-nav > li > a {
+    padding: 0;
+}
+
+.nav > li > a {
+    padding: 0 15px 8px 15px;
+}
+
+.logo {
+    opacity: 0.75;
+}

@@ -1,0 +1,48 @@
+<div class="jumbotron">
+    <h1>ElastiCache Support</h1>
+
+    <p>This showcase demonstrates the main features provided by the ElastiCache support in Spring Cloud AWS.</p>
+
+    <p><a href="#" class="btn btn-primary btn-lg" role="button">Learn more »</a></p>
+</div>
+
+<div class="panel panel-primary" ng-controller="ElastiCacheCtrl as elastiCache">
+    <div class="panel-heading">
+        <h3 class="panel-title">ElastiCache Support</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" role="form" name="cacheForm">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <p class="form-control-static">Caching sample that returns a value with 15 seconds
+                        expiration
+                        time.</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="key" class="col-sm-2 control-label">Cache key</label>
+
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="key" placeholder="Type a key..."
+                           ng-model="elastiCache.key" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2">
+                    <button class="btn btn-default" ng-click="elastiCache.getValue()"
+                            ng-disabled="cacheForm.$invalid">Get value
+                    </button>
+                </div>
+
+                <div class="col-sm-10">
+                    <p class="form-control-static" ng-bind="elastiCache.value"
+                       ng-show="!elastiCache.loading"></p>
+                    <img src="images/wait.gif" alt="Wait throbber" ng-show="elastiCache.loading"/>
+                </div>
+            </div>
+        </form>
+        <source-code
+                path="src/main/java/org/springframework/cloud/aws/sample/elasticache/ExpensiveService.java"></source-code>
+        <source-code path="src/main/resources/org/springframework/cloud/aws/sample/aws-config.xml"></source-code>
+    </div>
+</div>

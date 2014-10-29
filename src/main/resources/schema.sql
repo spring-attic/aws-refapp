@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS Person;
+CREATE TABLE Person(firstName VARCHAR(100),lastName VARCHAR(100));
