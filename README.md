@@ -10,10 +10,13 @@ To check out the project and build it from source, do the following:
 ## Run it on your own AWS environment ##
 If you want to start this application on your own AWS environment you just need to do the following steps:
 
+* Choose Irland as region
 * Go to the CloudFormation console.
 * Create a new stack
+    * Name the stack "AwsSampleStack".
     * Choose "Upload a template to Amazon S3".
     * Upload the _AwsSampleStack.template_ file (located at the root of this project).
+    * When prompted for a parameter value *rdsPassword* just type a password of your choice with a min length of 8 characters.
 
 The stack needs a while to start (around 15 to 20 minutes). Once it is complete, you can copy the public DNS address
 of the created EC2 instance and open it in your browser with port 8080. 
