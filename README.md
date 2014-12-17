@@ -10,7 +10,7 @@ To check out the project and build it from source, do the following:
 ## Run it on your own AWS environment ##
 If you want to start this application on your own AWS environment you just need to do the following steps:
 
-* Choose Irland as region
+* Choose Ireland as region
 * Go to the CloudFormation console.
 * Create a new stack
     * Name the stack "AwsSampleStack".
@@ -40,9 +40,11 @@ the database inside the integration tests. This password has a minimum length of
 
 An example file would look like this
 
-	accessKey=ilaugsjdlkahgsdlaksdhg
-	secretKey=aöksjdhöadjs,höalsdhjköalsdjhasd+
-	rdsPassword=someVerySecretPassword
+	cloud.aws.credentials.accessKey=ilaugsjdlkahgsdlaksdhg
+    cloud.aws.credentials.secretKey=aöksjdhöadjs,höalsdhjköalsdjhasd+
+    cloud.aws.region.static=EU_WEST_1
+    cloud.aws.stack.name=AwsSampleStack
+    cloud.aws.rds.RdsInstance.password=someVerySecretPassword
 
 Once you created the properties file you can start the application using the following command:
 
