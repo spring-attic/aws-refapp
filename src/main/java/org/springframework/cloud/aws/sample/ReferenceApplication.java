@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.aws.sample;
 
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
@@ -26,7 +28,15 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
-import org.springframework.context.annotation.*;
+import org.springframework.cloud.aws.autoconfigure.cache.ElastiCacheAutoConfiguration;
+import org.springframework.cloud.aws.cache.config.annotation.EnableElastiCache;
+import org.springframework.cloud.aws.core.env.ResourceIdResolver;
+import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
+import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 import java.util.ArrayList;
@@ -35,12 +45,10 @@ import java.util.List;
 /**
  * @author Alain Sahli
  */
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = ElastiCacheAutoConfiguration.class)
 @Configuration
 @ComponentScan
 @EnableWebSocket
-@EnableCaching
-@ImportResource("classpath:org/springframework/cloud/aws/sample/aws-config.xml")
 public class ReferenceApplication implements EmbeddedServletContainerCustomizer {
 
     public static void main(String[] args) {
@@ -54,15 +62,39 @@ public class ReferenceApplication implements EmbeddedServletContainerCustomizer 
         container.setMimeMappings(mappings);
     }
 
-    @Bean
+    @Configuration
+    @EnableCaching
     @Profile("local")
-    public CacheManager createSimpleCacheManager() {
-        SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
-        List<Cache> caches = new ArrayList<>(2);
-        caches.add(new ConcurrentMapCache("CacheCluster"));
-        caches.add(new ConcurrentMapCache("GitHubSourceCode"));
-        simpleCacheManager.setCaches(caches);
+    protected static class LocalCacheConfiguration {
 
-        return simpleCacheManager;
+        @Bean
+        public CacheManager createSimpleCacheManager() {
+            SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
+            List<Cache> caches = new ArrayList<>(2);
+            caches.add(new ConcurrentMapCache("CacheCluster"));
+            caches.add(new ConcurrentMapCache("GitHubSourceCode"));
+            simpleCacheManager.setCaches(caches);
+
+            return simpleCacheManager;
+        }
+
     }
+
+    @Configuration
+    @EnableElastiCache
+    @Profile("!local")
+    protected static class ElastiCacheConfiguration {
+
+    }
+
+    @Bean
+    public QueueMessagingTemplate queueMessagingTemplate(AmazonSQS amazonSqs, ResourceIdResolver resourceIdResolver) {
+        return new QueueMessagingTemplate(amazonSqs, resourceIdResolver);
+    }
+
+    @Bean
+    public NotificationMessagingTemplate notificationMessagingTemplate(AmazonSNS amazonSNS, ResourceIdResolver resourceIdResolver) {
+        return new NotificationMessagingTemplate(amazonSNS, resourceIdResolver);
+    }
+
 }
