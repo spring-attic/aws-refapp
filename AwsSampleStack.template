@@ -181,7 +181,8 @@
                             {
                                 "Effect": "Allow",
                                 "Action": [
-                                    "cloudformation:ListStackResources"
+                                    "cloudformation:ListStackResources",
+                                    "cloudformation:DescribeStackResources"
                                 ],
                                 "Resource": [
                                     "*"
