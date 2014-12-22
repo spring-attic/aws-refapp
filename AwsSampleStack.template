@@ -248,10 +248,24 @@
                     "#!/bin/bash\n",
                     "cd /home/ec2-user\n",
                     "wget https://s3.amazonaws.com/repo.elasticspring.org/org/springframework/cloud/aws/sample/spring-cloud-aws-reference-app/1.0.0-BUILD/spring-cloud-aws-reference-app-1.0.0-BUILD.war -O application.jar","\n",
-                    "nohup java -jar application.jar --rdsPassword=",
+                    "printf 'cloud.aws.region.auto\ncloud.aws.credentials.instanceProfile\ncloud.aws.stack.auto\ncloud.aws.rds.RdsInstance.password=",
                     { "Ref": "RdsPassword" },
-                    " > application.log & \n","\n"
+                    "' > application.properties\n",
+                    "nohup java -jar application.jar --spring.config.location=/home/ec2-user/application.properties > application.log & \n",
+                    "\n"
                 ]]}}
+            }
+        },
+        "Route53Domain": {
+            "Type": "AWS::Route53::RecordSet",
+            "Properties": {
+                "HostedZoneName": "elasticspring.org.",
+                "Name": "refapp.elasticspring.org.",
+                "Type": "A",
+                "TTL" : "300",
+                "ResourceRecords" : [
+                    { "Fn::GetAtt" : [ "SpringBootServer", "PublicIp" ] }
+                ]
             }
         },
         "SnsTopic": {
