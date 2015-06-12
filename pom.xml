@@ -16,7 +16,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-cloud-aws-version>1.0.0.BUILD-SNAPSHOT</spring-cloud-aws-version>
+        <spring-cloud-aws-version>1.0.1.RELEASE</spring-cloud-aws-version>
         <java.version>1.7</java.version>
     </properties>
 
