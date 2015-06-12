@@ -42,7 +42,7 @@ An example file would look like this
 
 	cloud.aws.credentials.accessKey=ilaugsjdlkahgsdlaksdhg
     cloud.aws.credentials.secretKey=aöksjdhöadjs,höalsdhjköalsdjhasd+
-    cloud.aws.region.static=EU_WEST_1
+    cloud.aws.region.static=eu-west-1
     cloud.aws.stack.name=AwsSampleStack
     cloud.aws.rds.RdsInstance.password=someVerySecretPassword
 
