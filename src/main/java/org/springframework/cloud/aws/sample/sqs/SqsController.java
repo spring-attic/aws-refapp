@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
 import org.springframework.cloud.aws.sample.websocket.DataWithTimestamp;
 import org.springframework.cloud.aws.sample.websocket.SendingTextWebSocketHandler;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class SqsController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqsController.class);
 
-    public static final String QUEUE_NAME = "MessageProcessingQueue";
+    private static final String QUEUE_NAME = "MessageProcessingQueue";
 
     private final QueueMessagingTemplate queueMessagingTemplate;
 
@@ -60,7 +61,7 @@ public class SqsController {
         this.queueMessagingTemplate.convertAndSend(QUEUE_NAME, message);
     }
 
-    @MessageMapping(QUEUE_NAME)
+    @SqsListener(QUEUE_NAME)
     private void receiveMessage(MessageToProcess message, @Header("ApproximateFirstReceiveTimestamp") String approximateFirstReceiveTimestamp) {
         LOG.debug("Received SQS message {}", message);
 
