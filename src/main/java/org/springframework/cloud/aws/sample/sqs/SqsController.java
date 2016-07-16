@@ -26,8 +26,11 @@ import org.springframework.cloud.aws.sample.websocket.DataWithTimestamp;
 import org.springframework.cloud.aws.sample.websocket.SendingTextWebSocketHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -58,7 +61,9 @@ public class SqsController {
     public void sendMessageToMessageProcessingQueue(@RequestBody MessageToProcess message) {
         LOG.debug("Going to send message {} over SQS", message);
 
-        this.queueMessagingTemplate.convertAndSend(QUEUE_NAME, message);
+        for (int i = 0; i < 100; i++) {
+            this.queueMessagingTemplate.convertAndSend(QUEUE_NAME, message);
+        }
     }
 
     @SqsListener(QUEUE_NAME)
