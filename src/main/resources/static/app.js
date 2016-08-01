@@ -211,7 +211,7 @@
     // EC2
     springCloudAws.service('Ec2Service', function ($http) {
         this.getProperties = function () {
-            return $http.get('info');
+            return $http.get('instance-info');
         };
     });
 

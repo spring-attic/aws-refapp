@@ -34,7 +34,7 @@ public class ApplicationInfoController {
         this.infoBean = infoBean;
     }
 
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @RequestMapping(value = "/instance-info", method = RequestMethod.GET)
     public ApplicationInfoBean info() {
         return this.infoBean;
     }
