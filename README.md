@@ -11,6 +11,15 @@ To check out the project and build it from source, do the following:
 If you want to start this application on your own AWS environment you just need to do the following steps:
 
 * Choose Ireland as region
+* Go to the EC2 console.
+* Create a new key pair
+    * Click on the "Key Pairs" link
+    * Choose "Create Key Pair"
+    * Enter key pair name: eu-west-1
+* Go to the Route53 console.
+* Create a new hosted zone
+    * Choose "Create Hosted Zone"
+    * Enter domain name: elasticspring.org
 * Go to the CloudFormation console.
 * Create a new stack
     * Name the stack "AwsSampleStack".
