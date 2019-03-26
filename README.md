@@ -20,7 +20,7 @@ If you want to start this application on your own AWS environment you just need 
 
 The stack needs a while to start (around 15 to 20 minutes). Once it is complete, you can copy the public DNS address
 of the created EC2 instance and open it in your browser with port 8080. 
-For example http://ec2-54-72-102-202.eu-west-1.compute.amazonaws.com:8080.
+For example https://ec2-54-72-102-202.eu-west-1.compute.amazonaws.com:8080.
 
 ## Running the application locally ##
 **Please note that you need a running stack on AWS to run it locally!**
@@ -54,6 +54,6 @@ Once you created the properties file you can start the application using the fol
 [Spring Boot documentation] [Run-Spring-Boot] to see all the possibilities.
 
 [Spring-Cloud-AWS]: https://github.com/spring-cloud/spring-cloud-aws
-[Run-Spring-Boot]: http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-running-your-application
+[Run-Spring-Boot]: https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-running-your-application
 [AWS-Security-Credentials]: https://portal.aws.amazon.com/gp/aws/securityCredentials
 [Amazon-IAM]: https://aws.amazon.com/iam/
