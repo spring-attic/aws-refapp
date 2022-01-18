@@ -1,3 +1,5 @@
+# aws-refapp is no longer actively maintained by VMware, Inc.
+
 # Spring Cloud AWS Reference App #
 This reference application acts as a showcase for the features provided by [Spring Cloud AWS] [Spring-Cloud-AWS].
 
